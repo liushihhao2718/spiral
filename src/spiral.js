@@ -18,7 +18,7 @@ export default class Spiral {
 		// const points = new Array(2*this.param.length);
 		const points = [];
 
-		let degreeStep = this.param.rev*2*math.pi / this.param.length;
+		let degreeStep = this.param.rev*2*math.pi / (this.param.length-1);
 		let nextAngle = 0;
 
 		for (var i = 0; i < this.param.length; i++) {

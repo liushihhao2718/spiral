@@ -3,7 +3,7 @@ import Spiral from './spiral.js';
 import math from 'mathjs';
 const svg = Snap(1000, 1000);
 
-let a = 40, b=0.15, rev=2, length=100;
+let a = 40, b=0.15, rev=2, length=1000;
 let points;
 let spiral;
 let model;
@@ -18,6 +18,8 @@ function go(){
 	length = Number(document.getElementById('points').value);
 
 	let param = {a, b, rev, length};
+	console.log(param);
+
 	model = new Spiral(param);
 
 	points = model.makeSpiral();
@@ -42,55 +44,75 @@ function draw() {
 	spiral.attr({
 		stroke:'#000',
 		strokeWidth:2,
-		fill: 'none'
+		fill: 'yellow'
 	});
 	spiral.transform('translate(500 500)');
+
+	lines();
 }
 
 
 
-let bbox = Snap.path.getBBox(spiral);
+function lines() {
+	let bbox = Snap.path.getBBox(spiral);
 // alert(`y ${bbox.y + bbox.height}`);
 
 
-let rect = svg.rect(bbox.x, bbox.y, bbox.width, bbox.height);
-rect.attr({
-	stroke:'#000',
-	strokeWidth:2,
-	fill: 'none'
-});
+	let rect = svg.rect(bbox.x, bbox.y, bbox.width, bbox.height);
+	rect.attr({
+		stroke:'#000',
+		strokeWidth:2,
+		fill: 'none'
+	});
+	console.log(`rect (${bbox.x}, ${bbox.y})`);
 
-let xLine = svg.line(0, 0, 500, 0);
-xLine.attr({
-	stroke:'#00f',
-	strokeWidth:2,
-	fill: 'none'
-});
+	let xLine = svg.line(0, 0, 500, 0);
+	xLine.attr({
+		stroke:'#00f',
+		strokeWidth:2,
+		fill: 'none'
+	});
 
-let line60 = svg.line(0, 0, 250, -433.012701593);
-line60.attr({
-	stroke:'#f00',
-	strokeWidth:2,
-	fill: 'none'
-});
+	let line60 = svg.line(0, 0, 250, -433.012701593);
+	line60.attr({
+		stroke:'#f00',
+		strokeWidth:2,
+		fill: 'none'
+	});
 
-let alpha = math.atan(b);
-let lineAlpha = svg.line(500*math.cos(math.pi/2 + alpha), 500*math.sin(math.pi/2 + alpha), 500*math.cos(math.pi/-2 + alpha), 500*math.sin(math.pi/-2 + alpha));
-lineAlpha.attr({
-	stroke:'#f00',
-	strokeWidth:2,
-	fill: 'none'
-});
+	let alpha = math.atan(b);
+	let lineAlpha = svg.line(500*math.cos(math.pi/2 + alpha), 500*math.sin(math.pi/2 + alpha), 500*math.cos(math.pi/-2 + alpha), 500*math.sin(math.pi/-2 + alpha));
+	lineAlpha.attr({
+		stroke:'#f00',
+		strokeWidth:2,
+		fill: 'none'
+	});
 
 
 
-let p1 = model.makeSpiralPoint(math.pi/-2 + alpha + 2*math.pi);
+	let H = model.makeSpiralPoint(alpha + 3*math.pi);
+	let V = model.makeSpiralPoint(alpha + (7/2)*math.pi);
+	let V2 = model.makeSpiralPoint(alpha + (5/2)*math.pi);
 
-let p = svg.circle(p1[0], p1[1], 10);
-p.attr({
-	fill:'blue'
-});
-// alert(p1);
+	let O = svg.circle(bbox.x - H[0],
+				bbox.y - V[1],
+				5);
+	O.attr({
+		fill:'red'
+	});
+	let pH = svg.circle(H[0], H[1], 10);
+	pH.attr({
+		fill:'blue'
+	});
 
-let group = svg.g(rect, xLine, line60, lineAlpha, p);
-group.transform('translate(500 500)');
+	let pV = svg.circle(V[0], V[1], 10);
+	pV.attr({
+		fill:'green'
+	});
+	let pV2 = svg.circle(V2[0], V2[1], 10);
+	pV.attr({
+		fill:'green'
+	});
+	let group = svg.g(rect, xLine, line60, lineAlpha, pH, pV, pV2, O);
+	group.transform('translate(500 500)');
+}
