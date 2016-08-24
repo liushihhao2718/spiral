@@ -7,18 +7,17 @@ let a = 40, b=0.15, rev=2, length=1000;
 let points;
 let spiral;
 let model;
-go();
-
+// go();
+rectAndSpiral();
 function go(){
 	svg.clear();
 
-	a = Number(document.getElementById('a').value);
-	b = Number(document.getElementById('b').value);
-	rev = Number(document.getElementById('rev').value);
-	length = Number(document.getElementById('points').value);
+	// a = Number(document.getElementById('a').value);
+	// b = Number(document.getElementById('b').value);
+	// rev = Number(document.getElementById('rev').value);
+	// length = Number(document.getElementById('points').value);
 
 	let param = {a, b, rev, length};
-	console.log(param);
 
 	model = new Spiral(param);
 
@@ -44,75 +43,48 @@ function draw() {
 	spiral.attr({
 		stroke:'#000',
 		strokeWidth:2,
-		fill: 'yellow'
+		fill: '#fff'
 	});
 	spiral.transform('translate(500 500)');
-
-	lines();
 }
 
 
 
-function lines() {
-	let bbox = Snap.path.getBBox(spiral);
-// alert(`y ${bbox.y + bbox.height}`);
 
+function caculateA(h) {
 
-	let rect = svg.rect(bbox.x, bbox.y, bbox.width, bbox.height);
+	let alpha = math.atan(b);
+	return h * math.exp(-1*b * (5/2*math.pi + alpha)) / ((1 + math.exp(b * math.pi)) * math.cos(alpha));
+}
+
+function rectAndSpiral() {
+	let rect = svg.rect(200, 200, 500, 250);
 	rect.attr({
 		stroke:'#000',
 		strokeWidth:2,
-		fill: 'none'
+		fill: '#fff'
 	});
-	console.log(`rect (${bbox.x}, ${bbox.y})`);
-
-	let xLine = svg.line(0, 0, 500, 0);
-	xLine.attr({
-		stroke:'#00f',
-		strokeWidth:2,
-		fill: 'none'
-	});
-
-	let line60 = svg.line(0, 0, 250, -433.012701593);
-	line60.attr({
-		stroke:'#f00',
-		strokeWidth:2,
-		fill: 'none'
-	});
+	const a = caculateA( Number(rect.attr().height) );
+	let param = {a, b, rev, length};
+	model = new Spiral(param);
+	points = model.makeSpiral();
+	draw();
 
 	let alpha = math.atan(b);
-	let lineAlpha = svg.line(500*math.cos(math.pi/2 + alpha), 500*math.sin(math.pi/2 + alpha), 500*math.cos(math.pi/-2 + alpha), 500*math.sin(math.pi/-2 + alpha));
-	lineAlpha.attr({
-		stroke:'#f00',
+
+	var x = model.makeSpiralPoint(alpha + 3 * math.pi);
+	var y = model.makeSpiralPoint(alpha + 7 / 2 * math.pi);
+
+	spiral.transform(`translate(${rect.attr().x - x[0]} ${rect.attr().y - y[1]})`);
+
+	let tail = svg.path(`M${-1*x[0]} 0 Q${ Number(rect.attr().width *0.8)} ${Number(rect.attr().height) * -0.1} ${ Number(rect.attr().width)} ${Number(rect.attr().height)}`);
+	tail.attr({
+		stroke:'#000',
 		strokeWidth:2,
-		fill: 'none'
+		fill:'none'
 	});
+	tail.transform(`translate(${rect.attr().x} ${rect.attr().y})`);
 
-
-
-	let H = model.makeSpiralPoint(alpha + 3*math.pi);
-	let V = model.makeSpiralPoint(alpha + (7/2)*math.pi);
-	let V2 = model.makeSpiralPoint(alpha + (5/2)*math.pi);
-
-	let O = svg.circle(bbox.x - H[0],
-				bbox.y - V[1],
-				5);
-	O.attr({
-		fill:'red'
-	});
-	let pH = svg.circle(H[0], H[1], 10);
-	pH.attr({
-		fill:'blue'
-	});
-
-	let pV = svg.circle(V[0], V[1], 10);
-	pV.attr({
-		fill:'green'
-	});
-	let pV2 = svg.circle(V2[0], V2[1], 10);
-	pV.attr({
-		fill:'green'
-	});
-	let group = svg.g(rect, xLine, line60, lineAlpha, pH, pV, pV2, O);
-	group.transform('translate(500 500)');
+	var group = svg.group(rect, spiral, tail);
+	group.drag();
 }
