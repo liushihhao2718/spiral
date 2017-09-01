@@ -7,15 +7,15 @@ let a = 40, b=0.15, rev=2, length=1000;
 let points;
 let spiral;
 let model;
-// go();
-rectAndSpiral();
+go();
+// rectAndSpiral();
 function go(){
 	svg.clear();
 
-	// a = Number(document.getElementById('a').value);
-	// b = Number(document.getElementById('b').value);
-	// rev = Number(document.getElementById('rev').value);
-	// length = Number(document.getElementById('points').value);
+	a = Number(document.getElementById('a').value);
+	b = Number(document.getElementById('b').value);
+	rev = Number(document.getElementById('rev').value);
+	length = Number(document.getElementById('points').value);
 
 	let param = {a, b, rev, length};
 

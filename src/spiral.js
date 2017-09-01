@@ -5,7 +5,7 @@ export default class Spiral {
 		/*
 		等角螺線
 		https://en.wikipedia.org/wiki/Logarithmic_spiral
-		f(x) = a * exp(b * angle)
+		f(angle) = a * exp(b * angle)
 		a : number 間距
 		b : number 角度
 		rev : number 轉幾圈
@@ -15,7 +15,6 @@ export default class Spiral {
 	}
 
 	makeSpiral() {
-		// const points = new Array(2*this.param.length);
 		const points = [];
 
 		let degreeStep = this.param.rev*2*math.pi / (this.param.length-1);
